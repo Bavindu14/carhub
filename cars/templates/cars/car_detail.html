@@ -1,0 +1,34 @@
+{% extends 'cars/base.html' %}
+
+{% block content %}
+<h2>{{ car.brand }} {{ car.name }} ({{ car.year }})</h2>
+
+{% if car.image %}
+    <img src="{{ car.image.url }}" class="img-fluid mb-3" style="max-width: 300px;">
+{% endif %}
+
+<h4>Place a Bid</h4>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Submit Bid</button>
+</form>
+
+<hr>
+
+<h5 class="mt-4">All Bids</h5>
+{% if bids %}
+    <ul class="list-group">
+        {% for bid in bids %}
+            <li class="list-group-item d-flex justify-content-between">
+                <span><strong>{{ bid.user.username }}</strong> - ${{ bid.amount }}</span>
+                <span>{{ bid.created_at|date:"M d, Y H:i" }}</span>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No bids yet.</p>
+{% endif %}
+
+<a href="{% url 'home' %}" class="btn btn-link mt-3">← Back to home</a>
+{% endblock %}

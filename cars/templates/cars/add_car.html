@@ -1,0 +1,13 @@
+{% extends 'cars/base.html' %}
+
+{% block content %}
+<h2 class="mb-4">Add Car</h2>
+
+<form method="post" enctype="multipart/form-data" class="border p-4 shadow-sm bg-light rounded">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Save</button>
+</form>
+
+<a href="{% url 'home' %}" class="btn btn-link mt-3">← Back to home</a>
+{% endblock %}

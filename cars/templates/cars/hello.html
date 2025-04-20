@@ -1,0 +1,45 @@
+{% extends 'cars/base.html' %}
+
+{% block content %}
+<h1 class="mb-4">All Cars</h1>
+
+<form method="get" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="q" class="form-control" placeholder="Search by brand or name..." value="{{ request.GET.q }}">
+        <button class="btn btn-outline-secondary" type="submit">Search</button>
+    </div>
+</form>
+
+
+<a href="{% url 'add_car' %}" class="btn btn-success mb-3">Add New Car</a>
+
+{% if cars %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for car in cars %}
+        <div class="col">
+            <div class="card h-100">
+                {% if car.image %}
+                    <img src="{{ car.image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ car.name }}">
+                {% else %}
+                    <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top" alt="No image">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ car.brand }} {{ car.name }}</h5>
+                    <p class="card-text">Year: {{ car.year }}</p>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                    <div>
+                        <a href="{% url 'edit_car' car.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                        <a href="{% url 'delete_car' car.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                    </div>
+                    <a href="{% url 'car_detail' car.pk %}" class="btn btn-sm btn-info">View & Bid</a>
+                </div>
+                
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No cars available.</p>
+{% endif %}
+{% endblock %}
