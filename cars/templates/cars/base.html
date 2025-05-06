@@ -10,17 +10,17 @@
 
     <style>
         .hero {
-            background: url('https://source.unsplash.com/1600x400/?car,showroom') no-repeat center center;
+            background: url('https://i0.wp.com/coverlettersandresume.com/wp-content/uploads/image-1220.png?resize=1024%2C585&ssl=1') no-repeat center center;
             background-size: cover;
             height: 400px;
-            color: white;
+            color: rgb(115, 225, 132);
             display: flex;
             align-items: center;
             justify-content: center;
             text-shadow: 1px 1px 5px black;
         }
         footer {
-            background-color: #f8f9fa;
+            background-color: #6b0dcf;
             padding: 20px 0;
             margin-top: 40px;
         }
@@ -28,7 +28,7 @@
 </head>
 <body>
 
-    <!-- ✅ Navbar -->
+    <!--  Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
         <div class="container">
             <a class="navbar-brand" href="{% url 'home' %}">CarHub</a>
@@ -57,18 +57,18 @@
         </div>
     </nav>
 
-    <!-- ✅ Hero Section -->
+    <!--  Hero Section -->
     <div class="hero">
         <h1>Welcome to CarHub</h1>
     </div>
 
-    <!-- ✅ Main Content -->
+    <!--  Main Content -->
     <div class="container my-5">
         {% block content %}
         {% endblock %}
     </div>
 
-    <!-- ✅ Footer -->
+    <!--  Footer -->
     <footer class="text-center text-muted">
         <div class="container">
             <p>&copy; 2025 CarHub. All rights reserved.</p>
