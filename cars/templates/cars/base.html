@@ -1,22 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>CarHub</title>
-    <!-- ✅ Bootstrap CDN -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="container mt-4">
-    {% if user.is_authenticated %}
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <p class="mb-0">Welcome, {{ user.username }}!</p>
-            <a href="{% url 'logout' %}" class="btn btn-sm btn-danger">Logout</a>
-        </div>
-    {% else %}
-        <a href="{% url 'login' %}" class="btn btn-primary btn-sm">Login</a>
-        <a href="{% url 'register' %}" class="btn btn-outline-primary btn-sm">Register</a>
-    {% endif %}
 
-    <hr>
-    {% block content %}{% endblock %}
+    <style>
+        .hero {
+            background: url('https://source.unsplash.com/1600x400/?car,showroom') no-repeat center center;
+            background-size: cover;
+            height: 400px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 1px 1px 5px black;
+        }
+        footer {
+            background-color: #f8f9fa;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ✅ Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">CarHub</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'add_car' %}">Add New Car</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Register</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ✅ Hero Section -->
+    <div class="hero">
+        <h1>Welcome to CarHub</h1>
+    </div>
+
+    <!-- ✅ Main Content -->
+    <div class="container my-5">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- ✅ Footer -->
+    <footer class="text-center text-muted">
+        <div class="container">
+            <p>&copy; 2025 CarHub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS (for navbar toggling on mobile) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
