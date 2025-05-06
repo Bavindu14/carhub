@@ -82,4 +82,9 @@ def car_detail(request, pk):
         'bids': bids,
     })
 
+def faq(request): return render(request, 'cars/faq.html')
+def about(request): return render(request, 'cars/about.html')
+def contact(request): return render(request, 'cars/contact.html')
+def services(request): return render(request, 'cars/services.html')
+def latest(request): return render(request, 'cars/latest.html')
 
