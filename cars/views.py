@@ -88,3 +88,26 @@ def contact(request): return render(request, 'cars/contact.html')
 def services(request): return render(request, 'cars/services.html')
 def latest(request): return render(request, 'cars/latest.html')
 
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
+
+def home(request):
+    return render(request, 'cars/hello.html')
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('home')
+        else:
+            return render(request, 'accounts/register.html', {'form': form})
+    else:
+        form = UserCreationForm()
+    return render(request, 'accounts/register.html', {'form': form})
