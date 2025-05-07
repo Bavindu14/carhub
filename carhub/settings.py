@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -37,9 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'cars',
     'debug_toolbar',
-    'accounts',
+    'widget_tweaks',
+    
+    # Local apps
+    'accounts.apps.AccountsConfig',
+    'cars.apps.CarsConfig',
 ]
 
 INTERNAL_IPS = [
@@ -134,20 +137,28 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_URL = 'login'
-LOGOUT_REDIRECT_URL = 'home'  # optional, used after logout
 
-LOGIN_REDIRECT_URL = '/'
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# Static files
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-
+# Media files settings (for profile pictures, car images, etc.)
 import os
-
-MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 
-LOGIN_REDIRECT_URL = 'home'  # After successful login
-LOGOUT_REDIRECT_URL = 'home'  # After logout
-LOGIN_URL = 'login'           # Where to redirect for login
+# Authentication settings
+LOGIN_REDIRECT_URL = 'home'  # Redirect after login
+LOGIN_URL = 'login'  # Login page URL name
+LOGOUT_REDIRECT_URL = 'home'  # Redirect after logout
+
+# Email settings for password reset
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development only
+# For production, configure your email service:
+# EMAIL_HOST = 'smtp.yourservice.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'your_email@example.com'
+# EMAIL_HOST_PASSWORD = 'your_password'
