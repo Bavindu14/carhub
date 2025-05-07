@@ -19,10 +19,9 @@ from django.urls import path, include  # include is important
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('cars.urls')),  # include cars app URLs
+    path('', include('cars.urls')), # include cars app URLs
     path('accounts/', include('accounts.urls')),
-    path('__debug__/', include(debug_toolbar.urls)),
-
+    path('__debug__/', include('debug_toolbar.urls')),
 ]
 
 

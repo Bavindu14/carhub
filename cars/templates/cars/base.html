@@ -25,31 +25,71 @@
 <body>
 
 <!--  Navbar  -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
-    <div class="container">
-        <a class="navbar-brand" href="#">CarHub</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item"><a class="nav-link" href="{% url 'faq' %}">FAQ</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About Us</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'services' %}">Leasing Services</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'latest' %}">Latest</a></li>
-            </ul>
-        </div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'home' %}">CarHub</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'faq' %}">FAQ</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'about' %}">About Us</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'services' %}">Our Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'latest' %}">Latest</a>
+          </li>
+        </ul>
+  
+        <ul class="navbar-nav mb-2 mb-lg-0">
+          {% if user.is_authenticated %}
+            <li class="nav-item">
+              <span class="navbar-text text-white me-2">
+                Hello, {{ user.username }}!
+              </span>
+            </li>
+            <li class="nav-item">
+              <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
+              </form>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'login' %}">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'register' %}">Register</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
     </div>
-</nav>
-
+  </nav>
+  
     <!--  Login/Register -->
     <div class="bg-light py-2 px-3 d-flex justify-content-end">
         {% if user.is_authenticated %}
             <div class="d-flex align-items-center">
                 <img src="{{ user.profile.image.url }}" class="rounded-circle me-2" width="40" height="40" alt="Profile">
                 <span class="me-2">{{ user.username }}</span>
-                <a href="{% url 'logout' %}" class="btn btn-sm btn-danger">Logout</a>
+                <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+                </form>
+                
             </div>
         {% else %}
             <a href="{% url 'login' %}" class="btn btn-sm btn-primary me-2">Login</a>
