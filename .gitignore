@@ -3,11 +3,12 @@ env/
 venv/
 .venv/
 *.pyc
+*.sqlite3
 *.pyo
 *.pyd
 *.pyc
 __pycache__/
 db.sqlite3
-.env
 .vscode/
 *.lo
+staticfiles/
