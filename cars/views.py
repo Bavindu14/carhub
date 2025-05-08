@@ -1,113 +1,106 @@
-
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Car
-from .forms import CarForm
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.core.paginator import Paginator
+from .models import Car, CarBrand, CarCategory
+from .forms import ContactForm
 
+def home(request):
+    featured_cars = Car.objects.filter(is_featured=True)[:6]
+    latest_cars = Car.objects.all().order_by('-created_date')[:6]
+    brands = CarBrand.objects.all()
+    categories = CarCategory.objects.all()
+    
+    context = {
+        'featured_cars': featured_cars,
+        'latest_cars': latest_cars,
+        'brands': brands,
+        'categories': categories,
+    }
+    return render(request, 'cars/home.html', context)
 
-def car_list(request):
-    cars = Car.objects.all()
-    return render(request, 'cars/hello.html', {'cars': cars})
+def faq(request):
+    return render(request, 'cars/faq.html')
 
-@login_required
-def add_car(request):
+def about(request):
+    return render(request, 'cars/about.html')
+
+def contact(request):
     if request.method == 'POST':
-        form = CarForm(request.POST,request.FILES)
+        form = ContactForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('home')
+            messages.success(request, 'Your message has been sent. We will contact you soon!')
+            return redirect('contact')
     else:
-        form = CarForm()
-    return render(request, 'cars/add_car.html', {'form': form})
+        form = ContactForm()
+    
+    return render(request, 'cars/contact.html', {'form': form})
 
-@login_required
-def edit_car(request, pk):
-    car = get_object_or_404(Car, pk=pk)
-    if request.method == 'POST':
-        form = CarForm(request.POST,request.FILES, instance=car)
-        if form.is_valid():
-            form.save()
-            return redirect('home')
-    else:
-        form = CarForm(instance=car)
-    return render(request, 'cars/edit_car.html', {'form': form})
+def services(request):
+    return render(request, 'cars/services.html')
 
-@login_required
-def delete_car(request, pk):
-    car = get_object_or_404(Car, pk=pk)
-    if request.method == 'POST':
-        car.delete()
-        return redirect('home')
-    return render(request, 'cars/delete_car.html', {'car': car})
-
-from django.db.models import Q
+def latest(request):
+    latest_cars = Car.objects.all().order_by('-created_date')
+    paginator = Paginator(latest_cars, 9)  # Show 9 cars per page
+    
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, 'cars/latest.html', {'page_obj': page_obj})
 
 def car_list(request):
-    query = request.GET.get('q')  # Get the search keyword from URL
-    if query:
-        # Search by brand or name (case-insensitive)
-        cars = Car.objects.filter(
-            Q(brand__icontains=query) |
-            Q(name__icontains=query)
-        )
-    else:
-        cars = Car.objects.all()
-
-    return render(request, 'cars/hello.html', {'cars': cars})
-
-from .models import Car, Bid
-from .forms import BidForm
+    cars = Car.objects.all().order_by('-created_date')
+    
+    # Filtering
+    brand = request.GET.get('brand')
+    category = request.GET.get('category')
+    year = request.GET.get('year')
+    price_min = request.GET.get('price_min')
+    price_max = request.GET.get('price_max')
+    
+    if brand:
+        cars = cars.filter(brand__name=brand)
+    if category:
+        cars = cars.filter(category__name=category)
+    if year:
+        cars = cars.filter(year=year)
+    if price_min:
+        cars = cars.filter(price__gte=price_min)
+    if price_max:
+        cars = cars.filter(price__lte=price_max)
+    
+    # Pagination
+    paginator = Paginator(cars, 9)  # Show 9 cars per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Filter options
+    brands = CarBrand.objects.all()
+    categories = CarCategory.objects.all()
+    years = Car.objects.values_list('year', flat=True).distinct().order_by('-year')
+    
+    context = {
+        'page_obj': page_obj,
+        'brands': brands,
+        'categories': categories,
+        'years': years,
+        'selected_brand': brand,
+        'selected_category': category,
+        'selected_year': year,
+        'selected_price_min': price_min,
+        'selected_price_max': price_max,
+    }
+    
+    return render(request, 'cars/car_list.html', context)
 
 def car_detail(request, pk):
     car = get_object_or_404(Car, pk=pk)
-    bids = car.bids.all().order_by('-amount')  # Show highest bids first
-
-    if request.method == 'POST':
-        if request.user.is_authenticated:
-            form = BidForm(request.POST)
-            if form.is_valid():
-                bid = form.save(commit=False)
-                bid.car = car
-                bid.user = request.user
-                bid.save()
-                return redirect('car_detail', pk=car.pk)
-        else:
-            return redirect('login')
-    else:
-        form = BidForm()
-
-    return render(request, 'cars/car_detail.html', {
+    similar_cars = Car.objects.filter(category=car.category).exclude(pk=pk)[:3]
+    
+    context = {
         'car': car,
-        'form': form,
-        'bids': bids,
-    })
-
-def faq(request): return render(request, 'cars/faq.html')
-def about(request): return render(request, 'cars/about.html')
-def contact(request): return render(request, 'cars/contact.html')
-def services(request): return render(request, 'cars/services.html')
-def latest(request): return render(request, 'cars/latest.html')
-
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-
-
-def home(request):
-    return render(request, 'cars/hello.html')
-
-from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import login
-
-def register(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('home')
-        else:
-            return render(request, 'accounts/register.html', {'form': form})
-    else:
-        form = UserCreationForm()
-    return render(request, 'accounts/register.html', {'form': form})
+        'similar_cars': similar_cars,
+    }
+    
+    return render(request, 'cars/car_detail.html', context)

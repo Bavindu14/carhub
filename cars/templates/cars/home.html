@@ -1,0 +1,142 @@
+{% extends 'cars/base.html' %}
+
+{% block content %}
+<div class="container">
+    <!-- Quick Search Section -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Quick Search</h5>
+        </div>
+        <div class="card-body">
+            <form action="{% url 'car_list' %}" method="get">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <select name="brand" class="form-select">
+                            <option value="">All Brands</option>
+                            {% for brand in brands %}
+                                <option value="{{ brand.name }}">{{ brand.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select name="category" class="form-select">
+                            <option value="">All Categories</option>
+                            {% for category in categories %}
+                                <option value="{{ category.name }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select name="price_max" class="form-select">
+                            <option value="">Max Price</option>
+                            <option value="10000">$10,000</option>
+                            <option value="25000">$25,000</option>
+                            <option value="50000">$50,000</option>
+                            <option value="100000">$100,000</option>
+                            <option value="250000">$250,000+</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary w-100">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Featured Cars Section -->
+    <h2 class="mb-4">Featured Cars</h2>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
+        {% for car in featured_cars %}
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    {% if car.is_sold %}
+                        <div class="position-absolute top-0 end-0 bg-danger text-white m-2 py-1 px-2 rounded">SOLD</div>
+                    {% endif %}
+                    <img src="{{ car.main_photo.url }}" class="card-img-top" alt="{{ car.title }}" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ car.year }} {{ car.brand }} {{ car.title }}</h5>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">{{ car.mileage }} miles</span>
+                            <span class="badge bg-{{ car.condition|yesno:'success,warning' }}">
+                                {{ car.get_condition_display }}
+                            </span>
+                        </div>
+                        <div class="mb-3">
+                            <div class="row">
+                                <div class="col-6">
+                                    <small class="text-muted">
+                                        <i class="bi bi-gear"></i> {{ car.get_transmission_display }}
+                                    </small>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">
+                                        <i class="bi bi-fuel-pump"></i> {{ car.get_fuel_type_display }}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <h5 class="text-primary">${{ car.price|floatformat:2 }}</h5>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <a href="{{ car.get_absolute_url }}" class="btn btn-outline-primary btn-sm w-100">View Details</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info">No featured cars available at the moment.</div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Latest Cars Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Latest Cars</h2>
+        <a href="{% url 'latest' %}" class="btn btn-outline-primary">View All</a>
+    </div>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for car in latest_cars %}
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    {% if car.is_sold %}
+                        <div class="position-absolute top-0 end-0 bg-danger text-white m-2 py-1 px-2 rounded">SOLD</div>
+                    {% endif %}
+                    <img src="{{ car.main_photo.url }}" class="card-img-top" alt="{{ car.title }}" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ car.year }} {{ car.brand }} {{ car.title }}</h5>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">{{ car.mileage }} miles</span>
+                            <span class="badge bg-{{ car.condition|yesno:'success,warning' }}">
+                                {{ car.get_condition_display }}
+                            </span>
+                        </div>
+                        <div class="mb-3">
+                            <div class="row">
+                                <div class="col-6">
+                                    <small class="text-muted">
+                                        <i class="bi bi-gear"></i> {{ car.get_transmission_display }}
+                                    </small>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">
+                                        <i class="bi bi-fuel-pump"></i> {{ car.get_fuel_type_display }}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <h5 class="text-primary">${{ car.price|floatformat:2 }}</h5>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <a href="{{ car.get_absolute_url }}" class="btn btn-outline-primary btn-sm w-100">View Details</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info">No cars available at the moment.</div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
