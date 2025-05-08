@@ -4,6 +4,9 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from .models import Car, CarBrand, CarCategory
 from .forms import ContactForm
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from .forms import CarForm, CarImageFormSet
 
 def home(request):
     featured_cars = Car.objects.filter(is_featured=True)[:6]
@@ -104,3 +107,44 @@ def car_detail(request, pk):
     }
     
     return render(request, 'cars/car_detail.html', context)
+
+
+@login_required
+def add_car(request):
+    if request.method == 'POST':
+        form = CarForm(request.POST, request.FILES)
+        formset = CarImageFormSet(request.POST, request.FILES, instance=Car(owner=request.user))
+        if form.is_valid() and formset.is_valid():
+            car = form.save(commit=False)
+            car.owner = request.user
+            car.save()
+            formset.instance = car
+            formset.save()
+            return redirect('car_detail', pk=car.pk)
+    else:
+        form = CarForm()
+        formset = CarImageFormSet(instance=Car(owner=request.user))
+    return render(request, 'cars/add_car.html', {'form': form, 'formset': formset})
+
+@login_required
+def edit_car(request, pk):
+    car = get_object_or_404(Car, pk=pk, owner=request.user)
+    if request.method == 'POST':
+        form = CarForm(request.POST, request.FILES, instance=car)
+        formset = CarImageFormSet(request.POST, request.FILES, instance=car)
+        if form.is_valid() and formset.is_valid():
+            form.save()
+            formset.save()
+            return redirect('car_detail', pk=car.pk)
+    else:
+        form = CarForm(instance=car)
+        formset = CarImageFormSet(instance=car)
+    return render(request, 'cars/edit_car.html', {'form': form, 'formset': formset})
+
+@login_required
+def delete_car(request, pk):
+    car = get_object_or_404(Car, pk=pk, owner=request.user)
+    if request.method == 'POST':
+        car.delete()
+        return redirect('car_list')
+    return render(request, 'cars/delete_car.html', {'car': car})

@@ -1,7 +1,10 @@
-<h1>Delete Car</h1>
-<p>Are you sure you want to delete "{{ car }}"?</p>
-<form method="post">
+{% extends 'cars/base.html' %}
+{% block content %}
+  <h2>Delete Car</h2>
+  <p>Are you sure you want to delete "{{ car.title }}"?</p>
+  <form method="post">
     {% csrf_token %}
-    <button type="submit">Yes, delete</button>
-</form>
-<a href="{% url 'home' %}">Cancel</a>
+    <button type="submit">Confirm Delete</button>
+    <a href="{% url 'car_detail' pk=car.pk %}">Cancel</a>
+  </form>
+{% endblock %}
