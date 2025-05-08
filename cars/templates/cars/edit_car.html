@@ -1,13 +1,13 @@
 {% extends 'cars/base.html' %}
-
 {% block content %}
-<h2 class="mb-4">Edit Car</h2>
-
-<form method="post" enctype="multipart/form-data" class="border p-4 shadow-sm bg-light rounded">
+  <h2>Edit Car</h2>
+  <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="btn btn-warning">Update</button>
-</form>
-
-<a href="{% url 'home' %}" class="btn btn-link mt-3">← Back to home</a>
+    {{ formset.management_form }}
+    {% for image_form in formset %}
+      {{ image_form.as_p }}
+    {% endfor %}
+    <button type="submit">Update</button>
+  </form>
 {% endblock %}
